@@ -29,7 +29,7 @@ def main:
 
     with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
         with tf.device('/cpu:0'):
-            model = FeatureExtractionModel()
+            model = FeatureExtractionModel(model_params)
             model.train(sess, X_train, Y_train, X_val, Y_val)
             accuracy = model.evaluate(sess, X_test, Y_test)
             print('***** test accuracy: %.3f' % accuracy)
