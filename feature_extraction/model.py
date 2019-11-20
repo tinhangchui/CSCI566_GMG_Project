@@ -85,7 +85,7 @@ class FeatureExtractionModel(object):
         print('flat layer: ' + str(self.flat.get_shape()))
         
         with tf.variable_scope('fc7'):
-            self.fc7 = fc(self.flat, 10)
+            self.fc7 = fc(self.flat, 5)
             print('fc7 layer: ' + str(self.fc7.get_shape()))
 
         return self.fc7
@@ -101,8 +101,8 @@ class FeatureExtractionModel(object):
 
         self.training = tf.placeholder(tf.bool)
 
-        # TODO: need to be revised based on parameters
-        labels = tf.one_hot(self.Y, 10)
+        # Output is intensity, which value will be [0, 4]
+        labels = tf.one_hot(self.Y, 5)
 
         # Build a model and get logits
         if self.param.model is 'default':
@@ -111,7 +111,6 @@ class FeatureExtractionModel(object):
             logits = self._pretrain_model(self.param.model)
 
         # Compute loss
-        # TODO: need to be revised based on parameters
         self.loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels, logits))
         
         # Build optimizer
