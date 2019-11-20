@@ -1,3 +1,6 @@
+import model
+import utils
+
 def main:
     num_dev_data = 50
     num_training = 49
@@ -10,6 +13,17 @@ def main:
     X_train, Y_train = get_train_data(data)
     X_val, Y_val = get_val_data(data)
     X_test, Y_test = get_test_data(data)
+
+    model_params = ParamDict(
+        model = 'default',               # use 'default' to init default model
+        input_shape = (100, 100, 3),     # (length, width, channel)
+        lr = 5e-4,
+        step_rate = 500,
+        decay_rate = 0.96,
+        num_epoch = 5,
+        batch_size = 64,
+        log_step = 50,
+    )
 
     tf.reset_default_graph()
 
