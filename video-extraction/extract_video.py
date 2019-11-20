@@ -29,14 +29,36 @@ def getYouTube():
     return stream, filename
 
 def getClipTime():
-    start = int(input("Enter the section starting time (sec after 0:00) : "))
-    end = int(input("Enter the section ending time (sec after 0:00) : "))
+    buffer = ''
+    while buffer == '':
+        buffer = input("Enter the section starting time (sec after 0:00) : ")
+        try:
+            start = int(buffer)
+            if start < 0:
+                print("Please input a positive integer.")
+                buffer = ''
+        except ValueError:
+            print("Please input a positive integer.")
+            buffer = ''
+    
+    buffer = ''
+    while buffer == '':
+        buffer = input("Enter the section ending time (sec after 0:00) : ")
+        try:
+            end = int(buffer)
+            if (end <= start):
+                print("Ending time must be greater than starting time.")
+                buffer = ''
+        except ValueError:
+            print("Please input a positive integer.")
+            buffer = ''
+
     return start, end
 
 def outputNumpyFile(filename, frame_array):
     numpy_arr = np.array(frame_array)
-    print(numpy_arr.shape)
-    numpy_arr.tofile(filename)
+    print("Output numpy array with shape {}.".format(numpy_arr.shape))
+    np.save(filename, frame_array)
 
 def getSectionDone():
     ans = input("You have finished adding a section. Any more section for this video? (y/n) : ")
@@ -122,7 +144,17 @@ def addMIDI(filename):
                 print("Done writing MIDI file!")
         except:
             print("Error while trying to download MIDI file.")      
-    
+
+def get_video_path(filename, section_num=None):
+    if section_num == None:
+        return VIDEO_FOLDER+"/"+filename+".mp4"
+    return VIDEO_FOLDER+"/"+filename+"_"+str(section_num)+".mp4"
+
+def get_debug_image_folder(filename, section_num):
+    if section_num == None:
+        return IMAGES_DEBUG_FOLDER+"/"+filename
+    return IMAGES_DEBUG_FOLDER+"/"+filename+"_"+str(section_num)
+
 def run():
     while True:
         print("-----------------------------------------------")
@@ -136,12 +168,12 @@ def run():
             section_num = 0
             while not done_section:
                 start, end = getClipTime()
-                ffmpeg_extract_subclip(VIDEO_FOLDER+"/"+filename+".mp4", start, end, targetname=VIDEO_FOLDER+"/"+filename+"_"+str(section_num)+".mp4")
+                ffmpeg_extract_subclip(get_video_path(filename), start, end, targetname=get_video_path(filename, section_num))
 
-                cap = cv2.VideoCapture(VIDEO_FOLDER+"/"+filename+"_"+str(section_num)+".mp4")
+                cap = cv2.VideoCapture(get_video_path(filename, section_num))
                 frame_num = 0
                 count = 0
-                os.makedirs(IMAGES_DEBUG_FOLDER+"/"+filename+"_"+str(section_num))
+                os.makedirs(get_debug_image_folder(filename, section_num))
                 frame_arr = []
                 while(cap.isOpened()):
                     ret, frame = cap.read()
@@ -150,7 +182,7 @@ def run():
                     if frame_num % FRAME_SKIP_NUM == 0:
                         resized_frame = cv2.resize(frame, IMAGE_RESIZE_SCALE)
                         frame_arr.append(resized_frame)
-                        cv2.imwrite(IMAGES_DEBUG_FOLDER+"/"+filename+"_"+str(section_num)+"/"+filename+"_"+str(count)+'.jpg', resized_frame)
+                        cv2.imwrite(get_debug_image_folder(filename, section_num)+"/"+filename+"_"+str(count)+'.jpg', resized_frame)
                         count += 1
                     frame_num += 1
 
