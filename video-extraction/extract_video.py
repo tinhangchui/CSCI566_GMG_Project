@@ -15,6 +15,18 @@ DATA_FILENAME = 'data.csv'   #Name of the data file that records attributes
 IMAGE_RESIZE_SCALE = (256, 256)      #The output picture's size
 FRAME_SKIP_NUM = 10                    #How much frame to skip after capture a picture
 
+ATTRIBUTE1_NAME = 'intensity'
+ATTRIBUTE2_NAME = 'tse_numerator'
+ATTRIBUTE3_NAME = 'tse_denominator'
+ATTRIBUTE4_NAME = 'bpm'
+ATTRIBUTE5_NAME = 'energy'
+
+ATTRIBUTE1_RANGE = (0, 4)
+ATTRIBUTE2_RANGE = (0, 256)
+ATTRIBUTE3_RANGE = (0, 128)
+ATTRIBUTE4_RANGE = (31250, 150000)
+ATTRIBUTE5_RANGE = (1, 20)
+
 def getYouTube():
     url = input("Enter the url of Youtube : ")
     try:
@@ -31,7 +43,7 @@ def getYouTube():
 def getClipTime():
     buffer = ''
     while buffer == '':
-        buffer = input("Enter the section starting time (sec after 0:00) : ")
+        buffer = input("Enter the section starting time (sec after 0:00. ending time is 5s after starting time) : ")
         try:
             start = int(buffer)
             if start < 0:
@@ -40,7 +52,9 @@ def getClipTime():
         except ValueError:
             print("Please input a positive integer.")
             buffer = ''
-    
+    """
+    # If the length of image arrays are inconsistent, there will be issues in stacking all images arrays into one.
+    # So for now we assume the ending time is 5 seconds after the starting time.
     buffer = ''
     while buffer == '':
         buffer = input("Enter the section ending time (sec after 0:00) : ")
@@ -52,8 +66,9 @@ def getClipTime():
         except ValueError:
             print("Please input a positive integer.")
             buffer = ''
+    """
 
-    return start, end
+    return start, start + 5
 
 def outputNumpyFile(section_dict, frame_array):
     numpy_arr = np.array(frame_array)
@@ -77,56 +92,26 @@ def getSectionDone():
             return True
 
 def getAttribute():
+    def getValue(name, low_bound, up_bound):
+        attribute = -999
+        while True:
+            attribute = float(input(f"{name} (Input a number {low_bound} to {up_bound}) : "))
+            if attribute >= low_bound and attribute <= up_bound:
+                return attribute
+            else:
+                print("Invalid input!")
+
     result = dict()
-
-    intensity = -999
-    while True:
-        intensity = float(input("How intense is this video section? (Input a number -1 to 1) : "))
-        if intensity >= -1 and intensity <= 1:
-            result['intensity'] = intensity
-            break
-    
-    happiness = -999
-    while True:
-        happiness = float(input("How happy is this video section? (Input a number -1 to 1) : "))
-        if happiness >= -1 and happiness <= 1:
-            result['happiness'] = happiness
-            break
-        else:
-            print("Invalid input!")
-
-    attribute3 = -999
-    while True:
-        attribute3 = float(input("attribute3 (Input a number -1 to 1) : "))
-        if attribute3 >= -1 and attribute3 <= 1:
-            result['attribute3'] = attribute3
-            break
-        else:
-            print("Invalide input!")
-
-    attribute4 = -999
-    while True:
-        attribute4 = float(input("attribute4 (Input a number -1 to 1) : "))
-        if attribute4 >= -1 and attribute4 <= 1:
-            result['attribute4'] = attribute4
-            break
-        else:
-            print("Invalid input!")
-
-    attribute5 = -999
-    while True:
-        attribute5 = float(input("attribute5 (Input a number -1 to 1) : "))
-        if attribute5 >= -1 and attribute5 <= 1:
-            result['attribute5'] = attribute5
-            break
-        else:
-            print("Invalid input!")
-    
+    result[ATTRIBUTE1_NAME] = getValue(ATTRIBUTE1_NAME, ATTRIBUTE1_RANGE[0], ATTRIBUTE1_RANGE[1])
+    result[ATTRIBUTE2_NAME] = getValue(ATTRIBUTE2_NAME, ATTRIBUTE2_RANGE[0], ATTRIBUTE2_RANGE[1])
+    result[ATTRIBUTE3_NAME] = getValue(ATTRIBUTE3_NAME, ATTRIBUTE3_RANGE[0], ATTRIBUTE3_RANGE[1])   
+    result[ATTRIBUTE4_NAME] = getValue(ATTRIBUTE4_NAME, ATTRIBUTE4_RANGE[0], ATTRIBUTE4_RANGE[1])
+    result[ATTRIBUTE5_NAME] = getValue(ATTRIBUTE5_NAME, ATTRIBUTE5_RANGE[0], ATTRIBUTE5_RANGE[1])
     return result
 
 
 def writeToCSV(section_dict):
-    fieldnames = ['name', 'intensity', 'happiness', 'attribute3', 'attribute4', 'attribute5']
+    fieldnames = ['name', ATTRIBUTE1_NAME, ATTRIBUTE2_NAME, ATTRIBUTE3_NAME, ATTRIBUTE4_NAME, ATTRIBUTE5_NAME]
     if not os.path.exists("./"+DATA_FILENAME):
         with open(DATA_FILENAME, 'w') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
