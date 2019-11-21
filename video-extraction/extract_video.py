@@ -12,7 +12,7 @@ IMAGES_FOLDER = './images'         #Folder to hold the image numpy data
 IMAGES_DEBUG_FOLDER = './debug_images' #Folder to hold the debug images
 DATA_FILENAME = 'data.csv'   #Name of the data file that records attributes
 
-IMAGE_RESIZE_SCALE = (100, 100)      #The output picture's size
+IMAGE_RESIZE_SCALE = (256, 256)      #The output picture's size
 FRAME_SKIP_NUM = 10                    #How much frame to skip after capture a picture
 
 def getYouTube():
@@ -55,10 +55,13 @@ def getClipTime():
 
     return start, end
 
-def outputNumpyFile(filename, frame_array):
+def outputNumpyFile(section_dict, frame_array):
     numpy_arr = np.array(frame_array)
-    print("Output numpy array with shape {}.".format(numpy_arr.shape))
+    filename = IMAGES_FOLDER+"/"+section_dict['name']
+
+    #Output data
     np.save(filename, frame_array)
+    print("Output numpy array with shape {}.".format(numpy_arr.shape))
 
 def getSectionDone():
     ans = input("You have finished adding a section. Any more section for this video? (y/n) : ")
@@ -105,7 +108,7 @@ def getAttribute():
     while True:
         attribute4 = float(input("attribute4 (Input a number -1 to 1) : "))
         if attribute4 >= -1 and attribute4 <= 1:
-            result['attribute3'] = attribute4
+            result['attribute4'] = attribute4
             break
         else:
             print("Invalid input!")
@@ -186,11 +189,11 @@ def run():
                         count += 1
                     frame_num += 1
 
-                outputNumpyFile(IMAGES_FOLDER+"/"+filename, frame_arr)
-                print("Image output Complete!")
-
                 section_dict = getAttribute()
                 section_dict['name'] = filename+"_"+str(section_num)
+
+                outputNumpyFile(section_dict, frame_arr)
+                print("Image output Complete!")
 
                 writeToCSV(section_dict)
                 print("Written to data csv file!")
