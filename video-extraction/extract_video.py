@@ -34,7 +34,7 @@ def getYouTube():
     except:
         print("An error occured when fetching youtube video.")
         return None, None
-    stream = yt.streams.first()
+    stream = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').first()
     filename = input("Enter the filename of video (Press Enter to use default filename) : ")
     if filename == '':
         filename = None
