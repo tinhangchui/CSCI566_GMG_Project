@@ -1,7 +1,1 @@
-﻿  MIDIFeatureExtractor.cpp
-c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(48): warning C4018: '<': signed/unsigned mismatch
-c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(55): warning C4018: '<': signed/unsigned mismatch
-c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(85): warning C4018: '<': signed/unsigned mismatch
-c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(112): warning C4018: '<': signed/unsigned mismatch
-c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(119): warning C4018: '<': signed/unsigned mismatch
-  MIDIFeatureExtractor.vcxproj -> C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\Debug\MIDIFeatureExtractor.exe
+﻿  MIDIFeatureExtractor.vcxproj -> C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\Debug\MIDIFeatureExtractor.exe

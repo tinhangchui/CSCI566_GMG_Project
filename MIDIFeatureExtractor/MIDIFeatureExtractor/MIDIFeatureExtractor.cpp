@@ -13,7 +13,7 @@
 #include <io.h>   
 #include <vector>  
 #include <algorithm>
-
+#include <stdio.h>
 
 using namespace std;
 using namespace smf;
@@ -102,8 +102,21 @@ int extractFeaturesFromMIDI(std::string fileName) {
 }
 
 int main(int argc, char** argv) {
+	Options options;
+	options.process(argc, argv);
+	// MidiFile midifile;
+	// if (options.getArgCount() == 0) midifile.read(cin);
+	// else midifile.read(options.getArg(1));
+	// midifile.doTimeAnalysis();
+	// midifile.linkNotePairs();
+
+
 	// batch read midi files
 	std::string folderPath = "C:\\Users\\ziang\\OneDrive\\work_space\\CSCI-566\\Project\\CSCI566_GMG_Project\\MIDIFeatureExtractor\\MIDIFeatureExtractor\\midi";
+	if (options.getArgCount() != 0)
+		folderPath = options.getArg(1);
+	printf("Enter midi folder path:\n");
+	scanf("%s", folderPath);
 	std::vector<string> files = getMIDIFiles(folderPath, false, true);
 	sort(files.begin(), files.end());
 
