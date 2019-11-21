@@ -1,21 +1,36 @@
+import model
+import utils
+import data_processing
+
 def main:
-    num_dev_data = 50
-    num_training = 49
-    num_validation = num_dev_data - num_training
-    num_test = 10
+    dataFilePath = ''
+    labelFilePath = ''
+    testset_ratio = 0.15
+    validset_ratio = 0.02
 
-    # TODO: data processing
-    data = prepocessing()
+    data_manager = Preprocessing(dataFilePath, labelFilePath, testset_ratio, validset_ratio)
 
-    X_train, Y_train = get_train_data(data)
-    X_val, Y_val = get_val_data(data)
-    X_test, Y_test = get_test_data(data)
+    X_train, Y_train = data_manager.get_train_data()
+    X_val, Y_val = data_manager.get_val_data()
+    X_test, Y_test = data_manager.get_test_data()
+
+    # Example param for model
+    model_params = ParamDict(
+        model = 'default',               # use 'default' to init default model
+        input_shape = (256, 256, 3),     # (length, width, channel)
+        lr = 5e-4,
+        step_rate = 500,
+        decay_rate = 0.96,
+        num_epoch = 5,
+        batch_size = 64,
+        log_step = 50,
+    )
 
     tf.reset_default_graph()
 
     with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
         with tf.device('/cpu:0'):
-            model = FeatureExtractionModel()
+            model = FeatureExtractionModel(model_params)
             model.train(sess, X_train, Y_train, X_val, Y_val)
             accuracy = model.evaluate(sess, X_test, Y_test)
             print('***** test accuracy: %.3f' % accuracy)
