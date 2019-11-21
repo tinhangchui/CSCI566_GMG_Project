@@ -6,4 +6,4 @@ class ParamDict(dict):
         except KeyError:
             raise AttributeError("Attribute %r not found" % attr)
     def __getstate__(self): return self
-    def __setstate__(self, d): self = d
+    def __setstate__(self, d): self = 
