@@ -14,6 +14,7 @@ DATA_FILENAME = 'data.csv'   #Name of the data file that records attributes
 
 IMAGE_RESIZE_SCALE = (256, 256)      #The output picture's size
 FRAME_SKIP_NUM = 10                    #How much frame to skip after capture a picture
+SECOND_PER_LABEL = 3                #How much seconds corresponding to one label
 
 ATTRIBUTE1_NAME = 'intensity'
 ATTRIBUTE2_NAME = 'tse_numerator'
@@ -43,7 +44,7 @@ def getYouTube():
 def getClipTime():
     buffer = ''
     while buffer == '':
-        buffer = input("Enter the section starting time (sec after 0:00. ending time is 5s after starting time) : ")
+        buffer = input("Enter the section starting time (sec after 0:00. ending time is 3s after starting time) : ")
         try:
             start = int(buffer)
             if start < 0:
@@ -52,9 +53,8 @@ def getClipTime():
         except ValueError:
             print("Please input a positive integer.")
             buffer = ''
-    """
+
     # If the length of image arrays are inconsistent, there will be issues in stacking all images arrays into one.
-    # So for now we assume the ending time is 5 seconds after the starting time.
     buffer = ''
     while buffer == '':
         buffer = input("Enter the section ending time (sec after 0:00) : ")
@@ -66,9 +66,8 @@ def getClipTime():
         except ValueError:
             print("Please input a positive integer.")
             buffer = ''
-    """
 
-    return start, start + 5
+    return start, end
 
 def outputNumpyFile(section_dict, frame_array):
     numpy_arr = np.array(frame_array)
@@ -143,6 +142,13 @@ def get_debug_image_folder(filename, section_num):
         return IMAGES_DEBUG_FOLDER+"/"+filename
     return IMAGES_DEBUG_FOLDER+"/"+filename+"_"+str(section_num)
 
+def split_frame(frame_arr, frame_per_label):
+    """
+    Splite frame_arr to couple groups of frames according to frame_per_label.
+    The rest are dropped.
+    """
+    return frame_arr[:len(frame_arr) // frame_per_label * frame_per_label]
+
 def run():
     while True:
         print("-----------------------------------------------")
@@ -156,36 +162,37 @@ def run():
             section_num = 0
             while not done_section:
                 start, end = getClipTime()
-                ffmpeg_extract_subclip(get_video_path(filename), start, end, targetname=get_video_path(filename, section_num))
-
-                cap = cv2.VideoCapture(get_video_path(filename, section_num))
-                frame_num = 0
-                count = 0
-                os.makedirs(get_debug_image_folder(filename, section_num))
-                frame_arr = []
-                while(cap.isOpened()):
-                    ret, frame = cap.read()
-                    if ret == False:
-                        break
-                    if frame_num % FRAME_SKIP_NUM == 0:
-                        resized_frame = cv2.resize(frame, IMAGE_RESIZE_SCALE)
-                        frame_arr.append(resized_frame)
-                        cv2.imwrite(get_debug_image_folder(filename, section_num)+"/"+filename+"_"+str(count)+'.jpg', resized_frame)
-                        count += 1
-                    frame_num += 1
-
                 section_dict = getAttribute()
-                section_dict['name'] = filename+"_"+str(section_num)
+                for it in range(start, start + ((end-start)//SECOND_PER_LABEL*SECOND_PER_LABEL), SECOND_PER_LABEL):
+                    ffmpeg_extract_subclip(get_video_path(filename), it, it+SECOND_PER_LABEL, targetname=get_video_path(filename, section_num))
 
-                outputNumpyFile(section_dict, frame_arr)
-                print("Image output Complete!")
+                    cap = cv2.VideoCapture(get_video_path(filename, section_num))
+                    frame_num = 0
+                    count = 0
+                    os.makedirs(get_debug_image_folder(filename, section_num))
+                    frame_arr = []
+                    while(cap.isOpened()):
+                        ret, frame = cap.read()
+                        if ret == False:
+                            break
+                        if frame_num % FRAME_SKIP_NUM == 0:
+                            resized_frame = cv2.resize(frame, IMAGE_RESIZE_SCALE)
+                            frame_arr.append(resized_frame)
+                            cv2.imwrite(get_debug_image_folder(filename, section_num)+"/"+filename+"_"+str(count)+'.jpg', resized_frame)
+                            count += 1
+                        frame_num += 1
+                  
+                    section_dict['name'] = filename+"_"+str(section_num)
 
-                writeToCSV(section_dict)
-                print("Written to data csv file!")
+                    outputNumpyFile(section_dict, frame_arr)
+                    print("Image output Complete!")
+
+                    writeToCSV(section_dict)
+                    print("Written to data csv file!")
+
+                    section_num += 1
 
                 addMIDI(filename)
-
-                section_num += 1
                 done_section = getSectionDone()
 
 if __name__ == "__main__":
