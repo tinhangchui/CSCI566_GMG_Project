@@ -34,3 +34,6 @@
 # Executables
 *.out
 *.app
+
+# Data
+*.mid

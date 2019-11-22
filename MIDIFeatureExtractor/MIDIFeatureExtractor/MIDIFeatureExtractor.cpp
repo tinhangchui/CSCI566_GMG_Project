@@ -61,7 +61,7 @@ vector<string> getMIDIFiles(std::string folderPath, bool is_print, bool is_write
 	return files;
 }
 
-int extractFeaturesFromMIDI(std::string fileName) {
+string extractFeaturesFromMIDI(std::string fileName) {
 	// parse midi file
 	MidiFile midifile;
 	midifile.read(fileName);
@@ -93,12 +93,13 @@ int extractFeaturesFromMIDI(std::string fileName) {
 	}
 	cout << "    tse: " << nn << "/" << dd << endl;
 	// bpm
-	cout << "    bpm: " << (60 * 1000000) / (midifile.getTicksPerQuarterNote() * 4) << endl;
+	int bpm = (60 * 1000000) / (midifile.getTicksPerQuarterNote() * 4);
+	cout << "    bpm: " << bpm << endl;
 	// energy
 	cout << "    energy: " << controlTracks << endl;
 	
 	// return
-	return controlTracks;
+	return to_string(nn) + " " + to_string(dd) + " " + to_string(bpm) + " " + to_string(controlTracks);
 }
 
 int main(int argc, char** argv) {
@@ -112,25 +113,26 @@ int main(int argc, char** argv) {
 
 
 	// batch read midi files
-	std::string folderPath = "C:\\Users\\ziang\\OneDrive\\work_space\\CSCI-566\\Project\\CSCI566_GMG_Project\\MIDIFeatureExtractor\\MIDIFeatureExtractor\\midi";
-	if (options.getArgCount() != 0)
-		folderPath = options.getArg(1);
+	// std::string folderPath = "C:\\Users\\ziang\\OneDrive\\work_space\\CSCI-566\\Project\\CSCI566_GMG_Project\\MIDIFeatureExtractor\\MIDIFeatureExtractor\\midi";
+	// if (options.getArgCount() != 0)
+	// 	folderPath = options.getArg(1);
+	std::string folderPath = "C:\\Users\\ziang\\OneDrive\\work_space\\CSCI-566\\Project\\CSCI566_GMG_Project\\MIDIFeatureExtractor\\MIDIFeatureExtractor\\midi\\adventure-island";
 	printf("Enter midi folder path:\n");
 	scanf("%s", folderPath);
 	std::vector<string> files = getMIDIFiles(folderPath, false, true);
 	sort(files.begin(), files.end());
 
 	// extract features from midi fiels
-	std::vector<int> energyList;
+	std::vector<string> paramList;
 	for (int i = 0; i < files.size(); i++) {
-		energyList.push_back(extractFeaturesFromMIDI(files.at(i)));
+		paramList.push_back(extractFeaturesFromMIDI(files.at(i)));
 	}
 
 	// write file
 	std::ofstream fout;
-	fout.open(folderPath + "\\energt_list.txt");
-	for (int i = 0; i < energyList.size(); i++)
-		fout << std::setprecision(10) << energyList.at(i) << std::endl;
+	fout.open(folderPath + "\\param_list.txt");
+	for (int i = 0; i < paramList.size(); i++)
+		fout << std::setprecision(10) << paramList.at(i) << std::endl;
 	fout.close();
 
 	return 0;

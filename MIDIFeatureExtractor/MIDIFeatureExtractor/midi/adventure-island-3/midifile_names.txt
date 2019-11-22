@@ -1,0 +1,3 @@
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\adventure-island-3\cave.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\adventure-island-3\first-stage.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\adventure-island-3\title-screen.mid

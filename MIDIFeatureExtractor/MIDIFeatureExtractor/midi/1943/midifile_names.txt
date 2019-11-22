@@ -1,0 +1,10 @@
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\1943\-raid-and-pacific-attack-title-screen-song.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\1943\assault-on-surface-forces-b.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\1943\level-1.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\1943\level-3-wingroove-.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\1943\level-3.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\1943\mission-failure.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\1943\mission-success.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\1943\second-boss-remix-.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\1943\surface-boss.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\1943\third-boss-remix-wingroove-.mid
