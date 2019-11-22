@@ -6,7 +6,7 @@ import csv
 
 IMAGES_FOLDER = './images'
 
-ATTRIBUTE1_NAME = 'intensity'
+#ATTRIBUTE1_NAME = 'intensity'
 ATTRIBUTE2_NAME = 'tse_numerator'
 ATTRIBUTE3_NAME = 'tse_denominator'
 ATTRIBUTE4_NAME = 'bpm'
@@ -21,7 +21,7 @@ with open('data.csv', mode='r') as csv_file:
         data = np.load(IMAGES_FOLDER+"/"+filename+".npy")
         all_data.append(data)
 
-        label = [row[ATTRIBUTE1_NAME], row[ATTRIBUTE2_NAME], row[ATTRIBUTE3_NAME], row[ATTRIBUTE4_NAME], row[ATTRIBUTE5_NAME]]
+        label = [row[ATTRIBUTE2_NAME], row[ATTRIBUTE3_NAME], row[ATTRIBUTE4_NAME], row[ATTRIBUTE5_NAME]]
         all_labels.append(label)
 
 all_data = np.stack(all_data)
