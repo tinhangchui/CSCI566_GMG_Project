@@ -2,9 +2,8 @@
 c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(48): warning C4018: '<': signed/unsigned mismatch
 c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(55): warning C4018: '<': signed/unsigned mismatch
 c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(85): warning C4018: '<': signed/unsigned mismatch
-c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(121): warning C4477: 'scanf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(127): warning C4018: '<': signed/unsigned mismatch
-c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(134): warning C4018: '<': signed/unsigned mismatch
-c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(121): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(130): warning C4018: '<': signed/unsigned mismatch
+c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(137): warning C4018: '<': signed/unsigned mismatch
+c:\users\ziang\onedrive\work_space\csci-566\project\csci566_gmg_project\midifeatureextractor\midifeatureextractor\midifeatureextractor.cpp(123): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(1274): note: see declaration of 'scanf'
   MIDIFeatureExtractor.vcxproj -> C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\Debug\MIDIFeatureExtractor.exe

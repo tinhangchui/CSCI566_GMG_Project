@@ -116,9 +116,12 @@ int main(int argc, char** argv) {
 	// std::string folderPath = "C:\\Users\\ziang\\OneDrive\\work_space\\CSCI-566\\Project\\CSCI566_GMG_Project\\MIDIFeatureExtractor\\MIDIFeatureExtractor\\midi";
 	// if (options.getArgCount() != 0)
 	// 	folderPath = options.getArg(1);
-	std::string folderPath = "C:\\Users\\ziang\\OneDrive\\work_space\\CSCI-566\\Project\\CSCI566_GMG_Project\\MIDIFeatureExtractor\\MIDIFeatureExtractor\\midi\\adventure-island";
-	printf("Enter midi folder path:\n");
-	scanf("%s", folderPath);
+	
+	// std::string folderPath = "C:\\Users\\ziang\\OneDrive\\work_space\\CSCI-566\\Project\\CSCI566_GMG_Project\\MIDIFeatureExtractor\\MIDIFeatureExtractor\\midi\\adventure-island";
+	char folderPathCh[150];
+	printf("Enter midi folder absolute path:\n");
+	scanf("%s", folderPathCh);
+	string folderPath = folderPathCh;
 	std::vector<string> files = getMIDIFiles(folderPath, false, true);
 	sort(files.begin(), files.end());
 

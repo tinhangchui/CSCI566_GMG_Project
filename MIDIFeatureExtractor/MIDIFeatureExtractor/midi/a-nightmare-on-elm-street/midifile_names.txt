@@ -1,0 +1,9 @@
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\a-nightmare-on-elm-street\elm-street.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\a-nightmare-on-elm-street\falling-asleep-zzzz-.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\a-nightmare-on-elm-street\freddy.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\a-nightmare-on-elm-street\house-1.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\a-nightmare-on-elm-street\house-2.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\a-nightmare-on-elm-street\house-3.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\a-nightmare-on-elm-street\the-attic.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\a-nightmare-on-elm-street\the-basement.mid
+C:\Users\ziang\OneDrive\work_space\CSCI-566\Project\CSCI566_GMG_Project\MIDIFeatureExtractor\MIDIFeatureExtractor\midi\a-nightmare-on-elm-street\wake-up-.mid
