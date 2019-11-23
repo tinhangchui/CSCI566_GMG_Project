@@ -17,6 +17,9 @@ def main():
     X_val, Y_val = data_manager.get_val_data()
     X_test, Y_test = data_manager.get_test_data()
 
+    print(X_train.shape)
+    print(Y_train.shape)
+
     # Example param for model
     model_params = utils.ParamDict(
         model = 'default',               # use 'default' to init default model
