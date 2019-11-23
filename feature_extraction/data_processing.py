@@ -25,12 +25,15 @@ class Preprocessing:
         dataList = [np.load(dataFile) for dataFile in dataFilePath]
         labelList = [np.load(labelFile) for labelFile in labelFilePath]
 
-        X = np.concatenate(dataList)
-        y = np.concatenate(labelList)
+        X = np.array(np.concatenate(dataList)).astype(np.float)
+        y = np.array(np.concatenate(labelList)).astype(np.float)
 
         shape = X.shape
         X = X.reshape(shape[0] * shape[1], shape[2], shape[3], shape[4])
         y = np.repeat(y, sample_per_section, axis=0)
+
+        # only pick one attribute for test
+        y = y[:,3] - 1
 
         print(X.shape)
         print(y.shape)

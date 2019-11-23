@@ -30,11 +30,14 @@ def main():
         num_epoch = 5,
         batch_size = 64,
         log_step = 50,
+        num_training = X_train.shape[0],
+        num_validation = X_val.shape[0],
+        num_test = X_test.shape[0],
     )
 
-    tf.reset_default_graph()
+    tf.compat.v1.reset_default_graph()
 
-    with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
+    with tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
         with tf.device('/cpu:0'):
             cur_model = model.FeatureExtractionModel(model_params)
             cur_model.train(sess, X_train, Y_train, X_val, Y_val)

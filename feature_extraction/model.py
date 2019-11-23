@@ -7,8 +7,8 @@ def conv2d(input, kernel_size, stride, num_filter):
     stride_shape = [1, stride, stride, 1]
     filter_shape = [kernel_size, kernel_size, input.get_shape()[3], num_filter]
 
-    W = tf.get_variable('w', filter_shape, tf.float32, tf.random_normal_initializer(0.0, 0.02))
-    b = tf.get_variable('b', [1, 1, 1, num_filter], initializer=tf.constant_initializer(0.0))
+    W = tf.compat.v1.get_variable('w', filter_shape, tf.float32, tf.random_normal_initializer(0.0, 0.02))
+    b = tf.compat.v1.get_variable('b', [1, 1, 1, num_filter], initializer=tf.constant_initializer(0.0))
     return tf.nn.conv2d(input, W, stride_shape, padding='SAME') + b
 
 def max_pool(input, kernel_size, stride):
@@ -21,8 +21,8 @@ def flatten(input):
 
 def fc(input, num_output):
     num_input = input.shape[1]
-    W = tf.get_variable('fc_w_%d' % num_output, [num_input, num_output], tf.float32, tf.random_normal_initializer(0.0, 0.02))
-    b = tf.get_variable('fc_b_%d' % num_output, [num_output], initializer=tf.constant_initializer(0.0))
+    W = tf.compat.v1.get_variable('fc_w_%d' % num_output, [num_input, num_output], tf.float32, tf.random_normal_initializer(0.0, 0.02))
+    b = tf.compat.v1.get_variable('fc_b_%d' % num_output, [num_output], initializer=tf.constant_initializer(0.0))
     return tf.nn.xw_plus_b(input, W, b, 'fc_%d' % num_output)
 
 
@@ -45,36 +45,36 @@ class FeatureExtractionModel(object):
 
     def _default_model(self):
         print('intput layer: ' + str(self.X.get_shape()))
-        with tf.variable_scope('conv1'):
+        with tf.compat.v1.variable_scope('conv1'):
             self.conv1 = conv2d(self.X, 3, 1, 32)
             self.elu1 = tf.nn.elu(self.conv1)
             print('conv1 layer: ' + str(self.elu1.get_shape()))
 
-        with tf.variable_scope('conv2'):
+        with tf.compat.v1.variable_scope('conv2'):
             self.conv2 = conv2d(self.elu1, 3, 1, 32)
             self.elu2 = tf.nn.elu(self.conv2)
             self.pool2 = max_pool(self.elu2, 2, 2)
             self.dropout2 = tf.layers.dropout(self.pool2, rate=0.4, training=self.training)
             print('conv2 layer: ' + str(self.dropout2.get_shape()))
         
-        with tf.variable_scope('conv3'):
+        with tf.compat.v1.variable_scope('conv3'):
             self.conv3 = conv2d(self.dropout2, 3, 1, 64)
             self.elu3 = tf.nn.elu(self.conv3)
             print('conv3 layer: ' + str(self.elu3.get_shape()))
         
-        with tf.variable_scope('conv4'):
+        with tf.compat.v1.variable_scope('conv4'):
             self.conv4 = conv2d(self.elu3, 3, 1, 64)
             self.elu4 = tf.nn.elu(self.conv4)
             self.pool4 = max_pool(self.elu4, 2, 2)
             self.dropout4 = tf.layers.dropout(self.pool4, rate=0.4, training=self.training)
             print('conv4 layer: ' + str(self.dropout4.get_shape()))
         
-        with tf.variable_scope('conv5'):
+        with tf.compat.v1.variable_scope('conv5'):
             self.conv5 = conv2d(self.dropout4, 3, 1, 128)
             self.elu5 = tf.nn.elu(self.conv5)
             print('conv5 layer: ' + str(self.elu5.get_shape()))
         
-        with tf.variable_scope('conv6'):
+        with tf.compat.v1.variable_scope('conv6'):
             self.conv6 = conv2d(self.elu5, 3, 1, 128)
             self.elu6 = tf.nn.elu(self.conv6)
             self.pool6 = max_pool(self.elu6, 2, 2)
@@ -84,8 +84,8 @@ class FeatureExtractionModel(object):
         self.flat = flatten(self.dropout6)
         print('flat layer: ' + str(self.flat.get_shape()))
         
-        with tf.variable_scope('fc7'):
-            self.fc7 = fc(self.flat, 5)
+        with tf.compat.v1.variable_scope('fc7'):
+            self.fc7 = fc(self.flat, 20)
             print('fc7 layer: ' + str(self.fc7.get_shape()))
 
         return self.fc7
@@ -96,13 +96,15 @@ class FeatureExtractionModel(object):
 
     def _build_model(self):
         # Define input variables
-        self.X = tf.placeholder(tf.float32, [None].extend(self.param.input_shape))
-        self.Y = tf.placeholder(tf.int64, [None])
+        x_shape = [None]
+        x_shape.extend(self.param.input_shape)
+        self.X = tf.compat.v1.placeholder(tf.float32, x_shape)
+        self.Y = tf.compat.v1.placeholder(tf.int64, [None])
 
-        self.training = tf.placeholder(tf.bool)
+        self.training = tf.compat.v1.placeholder(tf.bool)
 
-        # Output is intensity, which value will be [0, 4]
-        labels = tf.one_hot(self.Y, 5)
+        # Output is energy, which value will be [0, 19]
+        labels = tf.one_hot(self.Y, 20)
 
         # Build a model and get logits
         if self.param.model is 'default':
@@ -137,7 +139,7 @@ class FeatureExtractionModel(object):
         print('-' * 5 + '  Start training  ' + '-' * 5)
         for epoch in range(self.param.num_epoch):
             print('train for epoch %d' % epoch)
-            for i in range(num_training // self.param.batch_size):
+            for i in range(self.param.num_training // self.param.batch_size):
                 X_ = X_train[i * self.param.batch_size:(i + 1) * self.param.batch_size][:]
                 Y_ = Y_train[i * self.param.batch_size:(i + 1) * self.param.batch_size]
 
