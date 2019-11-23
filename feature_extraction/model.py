@@ -177,9 +177,9 @@ class FeatureExtractionModel(object):
     def evaluate(self, sess, X_eval, Y_eval):
         eval_accuracy = 0.0
         eval_iter = 0
-        for i in range(X_eval.shape[0] // self.batch_size):
-            X_ = X_eval[i * self.batch_size:(i + 1) * self.batch_size][:]
-            Y_ = Y_eval[i * self.batch_size:(i + 1) * self.batch_size]
+        for i in range(X_eval.shape[0] // self.param.batch_size):
+            X_ = X_eval[i * self.param.batch_size:(i + 1) * self.param.batch_size][:]
+            Y_ = Y_eval[i * self.param.batch_size:(i + 1) * self.param.batch_size]
 
             feed_dict = {self.X: X_, self.Y: Y_, self.training: False}
 
