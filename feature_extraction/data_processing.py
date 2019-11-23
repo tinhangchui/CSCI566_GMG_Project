@@ -26,8 +26,9 @@ class Preprocessing:
 
         X = np.concatenate(dataList)
         y = np.concatenate(labelList)
-        X_train, X_test, self.X_test, self.y_test = train_test_split(X, y, test_size=testset_ratio, random_state=1)
-        self.X_train, self.y_train, self.X_val, self.y_val = train_test_split(X_train, X_test, test_size=validset_ratio, random_state=1)
+
+        X_train, self.X_test, y_train, self.y_test = train_test_split(X, y, test_size=testset_ratio, random_state=1)
+        self.X_train, self.X_val, self.y_train, self.y_val = train_test_split(X_train, y_train, test_size=validset_ratio, random_state=1)
 
     def get_train_data(self):
         return self.X_train, self.y_train
