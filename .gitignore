@@ -2,6 +2,7 @@
 *.csv
 feature_extraction/__pycache__/*
 feature_extraction/data/*
+feature_extraction/tf_models/*
 video-extraction/images/*
 video-extraction/midi/*
 video-extraction/debug_images/*
