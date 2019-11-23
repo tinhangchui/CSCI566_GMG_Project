@@ -28,7 +28,7 @@ def main():
         step_rate = 500,
         decay_rate = 0.96,
         num_epoch = 5,
-        batch_size = 64,
+        batch_size = 16,
         log_step = 50,
         num_training = X_train.shape[0],
         num_validation = X_val.shape[0],
