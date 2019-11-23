@@ -11,14 +11,14 @@ class Preprocessing:
         validset_ratio:  a float between 0 to 1. This ratio determines how many data is used in validation set.
                          The rest will be used for traing set.
         """
-        if not isinstance(dataFilePath, list) and isinstance(dataFilePath, str):
+        if isinstance(dataFilePath, str):
             dataFilePath = [dataFilePath]
-        else:
-            raise TypeError('dataFilePath must be a list or string'.)
+        elif not isinstance(dataFilePath, list):
+            raise TypeError('dataFilePath must be a list or string.')
 
-        if not isinstance(labelFilePath) and isinstance(labelFilePath, str):
+        if isinstance(labelFilePath, str):
             labelFilePath = [labelFilePath]
-        else:
+        elif not isinstance(labelFilePath, list):
             raise TypeError('labelFilePath must be a list or string.')
 
         dataList = [np.load(dataFile) for dataFile in dataFilePath]

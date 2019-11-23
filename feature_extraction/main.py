@@ -2,13 +2,13 @@ import model
 import utils
 import data_processing
 
-def main:
-    dataFilePath = ''
-    labelFilePath = ''
+def main():
+    dataFilePath = ['data/ANightmareonElmStreet/data.npy', 'data/FinalFantasy/data.npy', 'data/WizardsAndWarriors/data.npy']
+    labelFilePath = ['data/ANightmareonElmStreet/label.npy', 'data/FinalFantasy/label.npy', 'data/WizardsAndWarriors/label.npy']
     testset_ratio = 0.15
     validset_ratio = 0.02
 
-    data_manager = Preprocessing(dataFilePath, labelFilePath, testset_ratio, validset_ratio)
+    data_manager = data_processing.Preprocessing(dataFilePath, labelFilePath, testset_ratio, validset_ratio)
 
     X_train, Y_train = data_manager.get_train_data()
     X_val, Y_val = data_manager.get_val_data()
