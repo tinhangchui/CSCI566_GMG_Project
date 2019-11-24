@@ -16,17 +16,19 @@ IMAGE_RESIZE_SCALE = (256, 256)      #The output picture's size
 FRAME_SKIP_NUM = 10                    #How much frame to skip after capture a picture
 SECOND_PER_LABEL = 3                #How much seconds corresponding to one label
 
-#ATTRIBUTE1_NAME = 'intensity'
+ATTRIBUTE1_NAME = 'intensity'      #intensity of game, subjective
 ATTRIBUTE2_NAME = 'tse_numerator'
 ATTRIBUTE3_NAME = 'tse_denominator'
 ATTRIBUTE4_NAME = 'bpm'
 ATTRIBUTE5_NAME = 'energy'
+ATTRIBUTE6_NAME = 'style'          #style of game, subjective. 0=dark/unhappy/... 4=bright,happy...
 
-#ATTRIBUTE1_RANGE = (0, 4)
+ATTRIBUTE1_RANGE = (0, 4)
 ATTRIBUTE2_RANGE = (0, 256)
 ATTRIBUTE3_RANGE = (0, 128)
 ATTRIBUTE4_RANGE = (0, 6*10e7)
 ATTRIBUTE5_RANGE = (1, 20)
+ATTRIBUTE6_RANGE = (0, 4)
 
 def getYouTube():
     url = input("Enter the url of Youtube : ")
@@ -101,16 +103,17 @@ def getAttribute():
                 print("Invalid input!")
 
     result = dict()
-    #result[ATTRIBUTE1_NAME] = getValue(ATTRIBUTE1_NAME, ATTRIBUTE1_RANGE[0], ATTRIBUTE1_RANGE[1])
     result[ATTRIBUTE2_NAME] = getValue(ATTRIBUTE2_NAME, ATTRIBUTE2_RANGE[0], ATTRIBUTE2_RANGE[1])
     result[ATTRIBUTE3_NAME] = getValue(ATTRIBUTE3_NAME, ATTRIBUTE3_RANGE[0], ATTRIBUTE3_RANGE[1])   
     result[ATTRIBUTE4_NAME] = getValue(ATTRIBUTE4_NAME, ATTRIBUTE4_RANGE[0], ATTRIBUTE4_RANGE[1])
     result[ATTRIBUTE5_NAME] = getValue(ATTRIBUTE5_NAME, ATTRIBUTE5_RANGE[0], ATTRIBUTE5_RANGE[1])
+    result[ATTRIBUTE1_NAME] = getValue(ATTRIBUTE1_NAME, ATTRIBUTE1_RANGE[0], ATTRIBUTE1_RANGE[1])
+    result[ATTRIBUTE6_NAME] = getValue(ATTRIBUTE6_NAME, ATTRIBUTE6_RANGE[0], ATTRIBUTE6_RANGE[1])
     return result
 
 
 def writeToCSV(section_dict):
-    fieldnames = ['name', ATTRIBUTE2_NAME, ATTRIBUTE3_NAME, ATTRIBUTE4_NAME, ATTRIBUTE5_NAME]
+    fieldnames = ['name', ATTRIBUTE2_NAME, ATTRIBUTE3_NAME, ATTRIBUTE4_NAME, ATTRIBUTE5_NAME, ATTRIBUTE1_NAME, ATTRIBUTE6_NAME]
     if not os.path.exists("./"+DATA_FILENAME):
         with open(DATA_FILENAME, 'w') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
