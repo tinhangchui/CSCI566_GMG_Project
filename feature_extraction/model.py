@@ -83,12 +83,20 @@ class FeatureExtractionModel(object):
 
         self.flat = flatten(self.dropout6)
         print('flat layer: ' + str(self.flat.get_shape()))
-        
-        with tf.compat.v1.variable_scope('fc7'):
-            self.fc7 = fc(self.flat, 20)
-            print('fc7 layer: ' + str(self.fc7.get_shape()))
 
-        return self.fc7
+        with tf.compat.v1.variable_scope('fc_tse'):
+            self.fc_tse = fc(self.flat, 3)
+            print('fc_tse layer: ' + str(self.fc_tse.get_shape()))
+
+        with tf.compat.v1.variable_scope('fc_bpm'):
+            self.fc_bpm = fc(self.flat, 20)
+            print('fc_bpm layer: ' + str(self.fc_bpm.get_shape()))
+
+        with tf.compat.v1.variable_scope('fc_energy'):
+            self.fc_energy = fc(self.flat, 20)
+            print('fc_energy layer: ' + str(self.fc_energy.get_shape()))
+
+        return [self.fc_tse, self.fc_bpm, self.fc_energy]
 
     def _pretrain_model(self, name):
         # TODO add pretrain model such as AlexNet
@@ -97,23 +105,29 @@ class FeatureExtractionModel(object):
     def _build_model(self):
         # Define input variables
         x_shape = [None]
+        y_shape = [None]
         x_shape.extend(self.param.input_shape)
+        y_shape.append(self.param.output_dimension)
         self.X = tf.compat.v1.placeholder(tf.float32, x_shape)
-        self.Y = tf.compat.v1.placeholder(tf.int64, [None])
+        self.Y = tf.compat.v1.placeholder(tf.int64, y_shape)
 
         self.training = tf.compat.v1.placeholder(tf.bool)
 
+        # Output is tse, which value will be [0, 2]
+        tse_labels = tf.one_hot(self.Y[:,0], 3)
         # Output is energy, which value will be [0, 19]
-        labels = tf.one_hot(self.Y, 20)
+        energy_labels = tf.one_hot(self.Y[:,2], 20)
 
         # Build a model and get logits
         if self.param.model is 'default':
-            logits = self._default_model()
+            logits_tse, regression_bpm, logits_energy = self._default_model()
         else:
             logits = self._pretrain_model(self.param.model)
 
         # Compute loss
-        self.loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels, logits))
+        tse_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(tse_labels, logits_tse))
+        energy_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(energy_labels, logits_energy))
+        self.loss_op = energy_loss + tse_loss
         
         # Build optimizer
         lr = self.param.lr
@@ -126,16 +140,22 @@ class FeatureExtractionModel(object):
         self.train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(self.loss_op)
 
         # Compute accuracy
-        self.predict_op = tf.argmax(logits, 1)
-        correct = tf.equal(self.predict_op, self.Y)
-        self.accuracy_op = tf.reduce_mean(tf.cast(correct, tf.float32))
+        # tse
+        self.tse_predict_op = tf.argmax(logits_tse, 1)
+        tse_correct = tf.equal(self.tse_predict_op, self.Y[:,0])
+        self.tse_accuracy_op = tf.reduce_mean(tf.cast(tse_correct, tf.float32))
+        # energy
+        self.energy_predict_op = tf.argmax(logits_energy, 1)
+        energy_correct = tf.equal(self.energy_predict_op, self.Y[:,2])
+        self.energy_accuracy_op = tf.reduce_mean(tf.cast(energy_correct, tf.float32))
         
     def train(self, sess, X_train, Y_train, X_val, Y_val):
         sess.run(tf.global_variables_initializer())
 
         step = 0
         losses = []
-        accuracies = []
+        tse_accuracies = []
+        energy_accuracies = []
         print('-' * 5 + '  Start training  ' + '-' * 5)
         for epoch in range(self.param.num_epoch):
             print('train for epoch %d' % epoch)
@@ -145,21 +165,22 @@ class FeatureExtractionModel(object):
 
                 feed_dict = {self.X: X_, self.Y: Y_, self.training: True}
 
-                fetches = [self.train_op, self.loss_op, self.accuracy_op]
+                fetches = [self.train_op, self.loss_op, self.tse_accuracy_op, self.energy_accuracy_op]
 
-                _, loss, accuracy = sess.run(fetches, feed_dict=feed_dict)
+                _, loss, tse_accuracy, energy_accuracy = sess.run(fetches, feed_dict=feed_dict)
                 losses.append(loss)
-                accuracies.append(accuracy)
+                tse_accuracies.append(tse_accuracy)
+                energy_accuracies.append(energy_accuracy)
 
                 if step % self.param.log_step == 0:
-                    print('iteration (%d): loss = %.3f, accuracy = %.3f' %
-                        (step, loss, accuracy))
+                    print('iteration (%d): loss = %.3f, tse_accuracy = %.3f, energy_accuracy = %.3f' %
+                        (step, loss, tse_accuracy, energy_accuracy))
                 step += 1
 
             # Print validation results
             print('validation for epoch %d' % epoch)
-            val_accuracy = self.evaluate(sess, X_val, Y_val)
-            print('-  epoch %d: validation accuracy = %.3f' % (epoch, val_accuracy))
+            val_tse_accuracy, val_energy_accuracy = self.evaluate(sess, X_val, Y_val)
+            print('-  epoch %d: validation tse_accuracy = %.3f, energy_accuracy = %.3f' % (epoch, val_tse_accuracy, energy_accuracy))
             
         # Graph 1. X: iteration (training step), Y: training loss
         plt.subplot(2, 1, 1)
@@ -175,7 +196,8 @@ class FeatureExtractionModel(object):
         plt.show()
 
     def evaluate(self, sess, X_eval, Y_eval):
-        eval_accuracy = 0.0
+        eval_tse_accuracy = 0.0
+        eval_energy_accuracy = 0.0
         eval_iter = 0
         for i in range(X_eval.shape[0] // self.param.batch_size):
             X_ = X_eval[i * self.param.batch_size:(i + 1) * self.param.batch_size][:]
@@ -183,10 +205,11 @@ class FeatureExtractionModel(object):
 
             feed_dict = {self.X: X_, self.Y: Y_, self.training: False}
 
-            accuracy = sess.run(self.accuracy_op, feed_dict=feed_dict)
-            eval_accuracy += accuracy
+            tse_accuracy, energy_accuracy = sess.run([self.tse_accuracy_op, self.energy_accuracy_op], feed_dict=feed_dict)
+            eval_tse_accuracy += tse_accuracy
+            eval_energy_accuracy += energy_accuracy
             eval_iter += 1
-        return eval_accuracy / eval_iter
+        return eval_tse_accuracy / eval_iter, eval_energy_accuracy / eval_iter
 
     def predict(self, sess, X_predict):
         feed_dict = {self.X: X_predict, self.training: False}

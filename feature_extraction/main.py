@@ -9,6 +9,7 @@ import tensorflow as tf
 MODEL_PARAMS = utils.ParamDict(
     model = 'default',               # use 'default' to init default model
     input_shape = (256, 256, 3),     # (length, width, channel)
+    output_dimension = 3,
     lr = 5e-4,
     step_rate = 500,
     decay_rate = 0.96,
@@ -44,6 +45,7 @@ def train_model():
         labelFilePath[i] = pathPrefix + labelFilePath[i];
     # dataFilePath = 'data/FinalFantasy/data.npy'
     # labelFilePath = 'data/FinalFantasy/label.npy'
+
     testset_ratio = 0.15
     validset_ratio = 0.02
 
