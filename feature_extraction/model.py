@@ -126,8 +126,8 @@ class FeatureExtractionModel(object):
         self.train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(self.loss_op)
 
         # Compute accuracy
-        predict = tf.argmax(logits, 1)
-        correct = tf.equal(predict, self.Y)
+        self.predict_op = tf.argmax(logits, 1)
+        correct = tf.equal(self.predict_op, self.Y)
         self.accuracy_op = tf.reduce_mean(tf.cast(correct, tf.float32))
         
     def train(self, sess, X_train, Y_train, X_val, Y_val):
@@ -187,3 +187,9 @@ class FeatureExtractionModel(object):
             eval_accuracy += accuracy
             eval_iter += 1
         return eval_accuracy / eval_iter
+
+    def predict(self, sess, X_predict):
+        feed_dict = {self.X: X_predict, self.training: False}
+        prediction = sess.run(self.predict_op, feed_dict=feed_dict)
+        np.savetxt('predict.out', prediction)
+        np.savetxt('predict_round.out', np.rint(prediction), fmt='%d')

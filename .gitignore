@@ -1,6 +1,8 @@
 
 *.csv
+*.out
 feature_extraction/__pycache__/*
+feature_extraction/predict*
 feature_extraction/data/*
 feature_extraction/tf_models/*
 video-extraction/images/*

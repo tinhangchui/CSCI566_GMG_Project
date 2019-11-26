@@ -1,6 +1,20 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
 
+
+def load_predict_data(data_path, num_prediction):
+    if isinstance(data_path, str):
+        data_path = [data_path]
+    elif not isinstance(data_path, list):
+        raise TypeError('data_path must be a list or string.')
+    dataList = [np.load(dataFile) for dataFile in data_path]
+    X = np.array(np.concatenate(dataList)).astype(np.float)
+    shape = X.shape
+    if len(shape) is 5:
+        X = X.reshape(shape[0] * shape[1], shape[2], shape[3], shape[4])
+    return X[:num_prediction]
+
+
 class Preprocessing:
     def __init__(self, dataFilePath, labelFilePath, testset_ratio, validset_ratio, sample_per_section=9):
         """
@@ -32,8 +46,8 @@ class Preprocessing:
         X = X.reshape(shape[0] * shape[1], shape[2], shape[3], shape[4])
         y = np.repeat(y, sample_per_section, axis=0)
 
-        # only pick one attribute for test
-        y = y[:,3] - 1
+        # convert bpm
+        y[:,2] = (60 * 1000000) / (y[:,2] * 4)
 
         print(X.shape)
         print(y.shape)
