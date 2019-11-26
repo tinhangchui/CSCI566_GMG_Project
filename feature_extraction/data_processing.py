@@ -46,9 +46,13 @@ class Preprocessing:
         X = X.reshape(shape[0] * shape[1], shape[2], shape[3], shape[4])
         y = np.repeat(y, sample_per_section, axis=0)
 
+        # do not calculate the first label, which is all 4
+        y = y[:,[1,2,3]]
+        # convert bpm from 4,8,16 to 0,1,2
+        y[:,0] = np.log2(y[:,0]) - 2
         # convert bpm
         y[:,2] = (60 * 1000000) / (y[:,2] * 4)
-
+        
         print(X.shape)
         print(y.shape)
 

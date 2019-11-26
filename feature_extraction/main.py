@@ -9,6 +9,7 @@ import tensorflow as tf
 MODEL_PARAMS = utils.ParamDict(
     model = 'default',               # use 'default' to init default model
     input_shape = (256, 256, 3),     # (length, width, channel)
+    output_dimension = 3,
     lr = 5e-4,
     step_rate = 500,
     decay_rate = 0.96,
@@ -24,8 +25,8 @@ MODEL_PARAMS = utils.ParamDict(
 def train_model():
     # dataFilePath = ['data/ANightmareonElmStreet/data.npy', 'data/FinalFantasy/data.npy', 'data/WizardsAndWarriors/data.npy']
     # labelFilePath = ['data/ANightmareonElmStreet/label.npy', 'data/FinalFantasy/label.npy', 'data/WizardsAndWarriors/label.npy']
-    dataFilePath = 'data/FinalFantasy/data.npy'
-    labelFilePath = 'data/FinalFantasy/label.npy'
+    dataFilePath = ['data/FinalFantasy/data.npy', 'data/WizardsAndWarriors/data.npy']
+    labelFilePath = ['data/FinalFantasy/label.npy', 'data/WizardsAndWarriors/label.npy']
     testset_ratio = 0.15
     validset_ratio = 0.02
 
@@ -35,9 +36,9 @@ def train_model():
     X_val, Y_val = data_manager.get_val_data()
     X_test, Y_test = data_manager.get_test_data()
 
-    MODEL_PARAMS.num_training = X_train.shape[0],
-    MODEL_PARAMS.num_validation = X_val.shape[0],
-    MODEL_PARAMS.num_test = X_test.shape[0],
+    MODEL_PARAMS.num_training = X_train.shape[0]
+    MODEL_PARAMS.num_validation = X_val.shape[0]
+    MODEL_PARAMS.num_test = X_test.shape[0]
 
     tf.compat.v1.reset_default_graph()
 
