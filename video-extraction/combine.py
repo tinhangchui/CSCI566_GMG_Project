@@ -1,4 +1,5 @@
-#This script will go through images folder to combine all .npy files into one data.npy file, and 
+
+#This script will go through images folder to combine all .npy files into one data.npy file, and
 #iterate through data.csv to combine all labels into one label.npy file.
 #This script is used after each team member has completed labeling videos.
 import numpy as np

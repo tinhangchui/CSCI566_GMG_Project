@@ -47,7 +47,8 @@ class Preprocessing:
         y = np.repeat(y, sample_per_section, axis=0)
 
         # convert bpm
-        y[:,2] = (60 * 1000000) / (y[:,2] * 4)
+        # y[:,2] = (60 * 1000000) / (y[:,2] * 4)
+        y = y[:,3]
 
         print(X.shape)
         print(y.shape)

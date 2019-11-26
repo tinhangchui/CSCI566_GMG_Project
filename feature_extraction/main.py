@@ -22,27 +22,49 @@ MODEL_PARAMS = utils.ParamDict(
 
 
 def train_model():
-    # dataFilePath = ['data/ANightmareonElmStreet/data.npy', 'data/FinalFantasy/data.npy', 'data/WizardsAndWarriors/data.npy']
-    # labelFilePath = ['data/ANightmareonElmStreet/label.npy', 'data/FinalFantasy/label.npy', 'data/WizardsAndWarriors/label.npy']
-    dataFilePath = 'data/FinalFantasy/data.npy'
-    labelFilePath = 'data/FinalFantasy/label.npy'
+    pathPrefix = "C:\\Users\\ziang\\OneDrive\\work_space\\CSCI-566\\Project\\";
+    dataFilePath = [
+        'data\\a-nightmare-on-elm-street\\data.npy',
+        # 'data\\argus-no-senshi-japan-\\data.npy',
+        # 'data\\final-fantasy\\data.npy',
+        # 'data\\super-mario-bros\\data.npy',
+        # 'data\\wizards-and-warriors\\data.npy'
+    ]
+
+    labelFilePath = [
+        'data\\a-nightmare-on-elm-street\\label.npy',
+        #  'data\\argus-no-senshi-japan-\\label.npy',
+        #  'data\\final-fantasy\\label.npy',
+         # 'data\\super-mario-bros\\label.npy',
+         # 'data\\wizards-and-warriors\\label.npy'
+     ]
+    for i in range(len(dataFilePath)):
+        dataFilePath[i] = pathPrefix + dataFilePath[i];
+    for i in range(len(labelFilePath)):
+        labelFilePath[i] = pathPrefix + labelFilePath[i];
+    # dataFilePath = 'data/FinalFantasy/data.npy'
+    # labelFilePath = 'data/FinalFantasy/label.npy'
     testset_ratio = 0.15
     validset_ratio = 0.02
 
+    print("loading data...")
     data_manager = data_processing.Preprocessing(dataFilePath, labelFilePath, testset_ratio, validset_ratio)
 
+    print("splitting data...")
     X_train, Y_train = data_manager.get_train_data()
     X_val, Y_val = data_manager.get_val_data()
     X_test, Y_test = data_manager.get_test_data()
 
-    MODEL_PARAMS.num_training = X_train.shape[0],
-    MODEL_PARAMS.num_validation = X_val.shape[0],
-    MODEL_PARAMS.num_test = X_test.shape[0],
+    print("data loading done!")
+
+    MODEL_PARAMS.num_training = X_train.shape[0]
+    MODEL_PARAMS.num_validation = X_val.shape[0]
+    MODEL_PARAMS.num_test = X_test.shape[0]
 
     tf.compat.v1.reset_default_graph()
 
     with tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
-        with tf.device('/cpu:0'):
+        with tf.device('/gpu:0'):
             cur_model = model.FeatureExtractionModel(MODEL_PARAMS)
             cur_model.train(sess, X_train, Y_train, X_val, Y_val)
             accuracy = cur_model.evaluate(sess, X_test, Y_test)
