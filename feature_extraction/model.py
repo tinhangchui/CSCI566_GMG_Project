@@ -1,7 +1,17 @@
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
+
+def mkdir(folderName):
+    prefix = os.path.dirname(os.path.abspath("__file__"))
+    path = prefix + "\\tf_models\\" + folderName
+    folder = os.path.exists(path)
+    if not folder:
+        os.makedirs(path)
+        print ("--->  build new folder: " + path + " <---")
+    return path
 
 def conv2d(input, kernel_size, stride, num_filter):
     stride_shape = [1, stride, stride, 1]
@@ -251,8 +261,10 @@ class FeatureExtractionModel(object):
             plt.plot(energy_accuracies, '-o')
         plt.xlabel('IterationForAccuracy')
         plt.gcf().set_size_inches(15, 12)
-        # plt.show()
-        plt.savefig("tf_models/" + self.param.model_name + "/" + self.param.model_name + "_" + self.param.loss_name + ".png")
+        # save training process image
+        prefix = mkdir(self.param.model_name)
+        plt.savefig(
+            prefix + "//" + self.param.model_name + "_" + self.param.loss_name + ".png")
 
     def evaluate(self, sess, X_eval, Y_eval):
         eval_tse_accuracy = 0.0
@@ -425,6 +437,7 @@ class TseFeatureExtractionModel(object):
             val_tse_accuracy = self.evaluate(sess, X_val, Y_val)
             print('-  epoch %d: validation tse_accuracy = %.3f' % (epoch, val_tse_accuracy))
 
+        plt.cla()
         # Graph 1. X: iteration (training step), Y: training loss
         plt.subplot(2, 1, 1)
         plt.title('Training loss')
@@ -438,8 +451,10 @@ class TseFeatureExtractionModel(object):
         plt.xlabel('IterationForAccuracy')
         plt.gcf().set_size_inches(15, 12)
         # plt.show()
+        # save training process image
+        prefix = mkdir(self.param.model_name)
         plt.savefig(
-            "tf_models/" + self.param.model_name + "/" + self.param.model_name + "_" + self.param.loss_name + ".png")
+            prefix + "//" + self.param.model_name + "_" + self.param.loss_name + ".png")
 
     def evaluate(self, sess, X_eval, Y_eval):
         eval_tse_accuracy = 0.0
@@ -586,6 +601,7 @@ class BpmFeatureExtractionModel(object):
                           (step, loss))
                 step += 1
 
+        plt.cla()
         # Graph 1. X: iteration (training step), Y: training loss
         plt.subplot(2, 1, 1)
         plt.title('Training loss')
@@ -595,9 +611,10 @@ class BpmFeatureExtractionModel(object):
         plt.subplot(2, 1, 2)
         plt.title('Accuracy')
         plt.gcf().set_size_inches(15, 12)
-        # plt.show()
+        # save training process image
+        prefix = mkdir(self.param.model_name)
         plt.savefig(
-            "tf_models/" + self.param.model_name + "/" + self.param.model_name + "_" + self.param.loss_name + ".png")
+            prefix + "//" + self.param.model_name + "_" + self.param.loss_name + ".png")
 
     def predict(self, sess, X_predict):
         feed_dict = {self.X: X_predict, self.training: False}
@@ -755,6 +772,7 @@ class EnergyFeatureExtractionModel(object):
             val_energy_accuracy = self.evaluate(sess, X_val, Y_val)
             print('-  epoch %d: validation energy_accuracy = %.3f' % (epoch, val_energy_accuracy))
 
+        plt.cla()
         # Graph 1. X: iteration (training step), Y: training loss
         plt.subplot(2, 1, 1)
         plt.title('Training loss')
@@ -766,9 +784,10 @@ class EnergyFeatureExtractionModel(object):
         plt.plot(energy_accuracies, '-o')
         plt.xlabel('IterationForAccuracy')
         plt.gcf().set_size_inches(15, 12)
-        # plt.show()
+        # save training process image
+        prefix = mkdir(self.param.model_name)
         plt.savefig(
-            "tf_models/" + self.param.model_name + "/" + self.param.model_name + "_" + self.param.loss_name + ".png")
+            prefix + "//" + self.param.model_name + "_" + self.param.loss_name + ".png")
 
     def evaluate(self, sess, X_eval, Y_eval):
         eval_energy_accuracy = 0.0
