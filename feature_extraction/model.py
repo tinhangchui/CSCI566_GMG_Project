@@ -458,8 +458,7 @@ class TseFeatureExtractionModel(object):
     def predict(self, sess, X_predict):
         feed_dict = {self.X: X_predict, self.training: False}
         prediction = sess.run(self.tse_predict_op, feed_dict=feed_dict)
-        np.savetxt('predict.out', prediction)
-        np.savetxt('predict_round.out', np.rint(prediction), fmt='%d')
+        return prediction
 
 
 class BpmFeatureExtractionModel(object):
@@ -561,6 +560,8 @@ class BpmFeatureExtractionModel(object):
 
         self.train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(self.loss_op)
 
+        self.bpm_predict_op = regression_bpm
+
     def train(self, sess, X_train, Y_train, X_val, Y_val):
         sess.run(tf.global_variables_initializer())
 
@@ -597,6 +598,11 @@ class BpmFeatureExtractionModel(object):
         # plt.show()
         plt.savefig(
             "tf_models/" + self.param.model_name + "/" + self.param.model_name + "_" + self.param.loss_name + ".png")
+
+    def predict(self, sess, X_predict):
+        feed_dict = {self.X: X_predict, self.training: False}
+        prediction = sess.run(self.bpm_predict_op, feed_dict=feed_dict)
+        return prediction
 
 
 class EnergyFeatureExtractionModel(object):
@@ -781,5 +787,4 @@ class EnergyFeatureExtractionModel(object):
     def predict(self, sess, X_predict):
         feed_dict = {self.X: X_predict, self.training: False}
         prediction = sess.run(self.energy_predict_op, feed_dict=feed_dict)
-        np.savetxt('predict.out', prediction)
-        np.savetxt('predict_round.out', np.rint(prediction), fmt='%d')
+        return prediction

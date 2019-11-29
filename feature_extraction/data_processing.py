@@ -2,6 +2,39 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 
+def merge_labels(predicted_tse, predicted_bpm, predicted_energy):
+    """
+    Example:
+    Input:
+    predicted_tse: [0,0,0]
+    predicted_bpm: [1,1,1]
+    predicted_energy: [2,2,2]
+    Expected output:
+    [
+        [0,1,2],
+        [0,1,2],
+        [0,1,2],
+    ]
+    """
+    num_preds = len(predicted_tse)
+    assert len(predicted_bpm) == num_preds
+    assert len(predicted_energy) == num_preds
+    default_tse_set = np.array([4] * num_preds).reshape(-1,1)
+    predicted_tse = predicted_tse.reshape(-1,1)
+    predicted_bpm = predicted_bpm.reshape(-1,1)
+    predicted_energy = predicted_energy.reshape(-1,1)
+    return np.concatenate((default_tse_set, predicted_tse, predicted_bpm, predicted_energy),axis=1)
+
+
+def generate_wb_config(predicted_labels):
+    """
+    Example:
+    Input:
+    predicted_labels: []
+    """
+    pass
+
+
 def load_predict_data(data_path, num_prediction):
     if isinstance(data_path, str):
         data_path = [data_path]
