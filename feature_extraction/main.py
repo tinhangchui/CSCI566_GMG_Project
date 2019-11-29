@@ -56,11 +56,19 @@ def predict(model_path, data_path, num_prediction):
     tf.reset_default_graph()
 
     predict_model = model.FeatureExtractionModel(MODEL_PARAMS)
+
+    # TODO: repeat this section for tse, bpm and energy
     sess = tf.Session()
     saver = tf.train.Saver()
     saver.restore(sess, model_path)
     predict_data = data_processing.load_predict_data(data_path, num_prediction)
-    predict_model.predict(sess, predict_data)
+    predicted_label = predict_model.predict(sess, predict_data)
+    # section end
+
+    predicted_tse, predicted_bpm, predicted_energy = np.array([0]),np.array([0]),np.array([0])
+    predicted_labels = data_processing.merge_labels(predicted_tse, predicted_bpm, predicted_energy)
+    np.savetxt('predict.out', predicted_labels)
+    np.savetxt('predict_round.out', np.rint(predicted_labels), fmt='%d')
 
 
 if __name__ == "__main__":

@@ -191,5 +191,4 @@ class FeatureExtractionModel(object):
     def predict(self, sess, X_predict):
         feed_dict = {self.X: X_predict, self.training: False}
         prediction = sess.run(self.predict_op, feed_dict=feed_dict)
-        np.savetxt('predict.out', prediction)
-        np.savetxt('predict_round.out', np.rint(prediction), fmt='%d')
+        return prediction
