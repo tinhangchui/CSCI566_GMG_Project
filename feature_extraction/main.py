@@ -91,11 +91,25 @@ def predict(model_path, data_path, num_prediction):
     tf.reset_default_graph()
 
     predict_model = model.FeatureExtractionModel(MODEL_PARAMS)
-    sess = tf.Session()
-    saver = tf.train.Saver()
-    saver.restore(sess, model_path)
-    predict_data = data_processing.load_predict_data(data_path, num_prediction)
-    predict_model.predict(sess, predict_data)
+    predicted_tse, predicted_bpm, predicted_energy = np.array([0]),np.array([0]),np.array([0])
+    model_suffixes = ['_tse','_bpm','_energy']
+    file_suffix = 'ckpt'
+
+    for model_suffix in model_suffixes:
+        sess = tf.Session()
+        saver = tf.train.Saver()
+        saver.restore(sess, model_path + model_suffix + file_suffix)
+        predict_data = data_processing.load_predict_data(data_path, num_prediction)
+        if model_suffix is '_tse':
+            predicted_tse = predict_model.predict(sess, predict_data)
+        elif model_suffix is '_bpm':
+            predicted_bpm = predict_model.predict(sess, predict_data)
+        else:
+            predicted_energy = predict_model.predict(sess, predict_data)
+
+    predicted_labels = data_processing.merge_labels(predicted_tse, predicted_bpm, predicted_energy)
+    np.savetxt('predict.out', predicted_labels)
+    np.savetxt('predict_round.out', np.rint(predicted_labels), fmt='%d')
 
 
 if __name__ == "__main__":
@@ -103,7 +117,7 @@ if __name__ == "__main__":
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--model_name", "-m", type=str, help="model character")
     parser.add_argument("--predict", "-p", default=False, nargs='?', const=True, help="use train mode")
-    parser.add_argument("--predict_file", "-f", type=str, default="tf_models/feature_extraction_v1.ckpt", help="model file for predict")
+    parser.add_argument("--predict_file", "-f", type=str, default="tf_models/model_name", help="path to model directory plus model prefix")
     parser.add_argument("--predict_data", "-d", type=str, help="model data for predict")
     parser.add_argument("--predict_num", "-n", default=10, help="how many data should be predicted in this data set")
 
