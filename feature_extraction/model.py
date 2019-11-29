@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import os
 
 
-def mkdir(folderName):
+def mkdir(folder_name, loss_name):
     prefix = os.path.dirname(os.path.abspath("__file__"))
-    path = prefix + "\\tf_models\\" + folderName
+    path = prefix + "\\tf_models\\" + folder_name
     folder = os.path.exists(path)
     if not folder:
         os.makedirs(path)
@@ -262,7 +262,7 @@ class FeatureExtractionModel(object):
         plt.xlabel('IterationForAccuracy')
         plt.gcf().set_size_inches(15, 12)
         # save training process image
-        prefix = mkdir(self.param.model_name)
+        prefix = mkdir(self.param.model_name, "whatever")
         plt.savefig(
             prefix + "//" + self.param.model_name + "_" + self.param.loss_name + ".png")
 
@@ -437,7 +437,7 @@ class TseFeatureExtractionModel(object):
             val_tse_accuracy = self.evaluate(sess, X_val, Y_val)
             print('-  epoch %d: validation tse_accuracy = %.3f' % (epoch, val_tse_accuracy))
 
-        plt.cla()
+        plt.figure(1)
         # Graph 1. X: iteration (training step), Y: training loss
         plt.subplot(2, 1, 1)
         plt.title('Training loss')
@@ -452,7 +452,7 @@ class TseFeatureExtractionModel(object):
         plt.gcf().set_size_inches(15, 12)
         # plt.show()
         # save training process image
-        prefix = mkdir(self.param.model_name)
+        prefix = mkdir(self.param.model_name, "tse_loss")
         plt.savefig(
             prefix + "//" + self.param.model_name + "_" + self.param.loss_name + ".png")
 
@@ -601,7 +601,7 @@ class BpmFeatureExtractionModel(object):
                           (step, loss))
                 step += 1
 
-        plt.cla()
+        plt.figure(2)
         # Graph 1. X: iteration (training step), Y: training loss
         plt.subplot(2, 1, 1)
         plt.title('Training loss')
@@ -612,7 +612,7 @@ class BpmFeatureExtractionModel(object):
         plt.title('Accuracy')
         plt.gcf().set_size_inches(15, 12)
         # save training process image
-        prefix = mkdir(self.param.model_name)
+        prefix = mkdir(self.param.model_name, "bpm_loss")
         plt.savefig(
             prefix + "//" + self.param.model_name + "_" + self.param.loss_name + ".png")
 
@@ -772,7 +772,7 @@ class EnergyFeatureExtractionModel(object):
             val_energy_accuracy = self.evaluate(sess, X_val, Y_val)
             print('-  epoch %d: validation energy_accuracy = %.3f' % (epoch, val_energy_accuracy))
 
-        plt.cla()
+        plt.figure(3)
         # Graph 1. X: iteration (training step), Y: training loss
         plt.subplot(2, 1, 1)
         plt.title('Training loss')
@@ -785,7 +785,7 @@ class EnergyFeatureExtractionModel(object):
         plt.xlabel('IterationForAccuracy')
         plt.gcf().set_size_inches(15, 12)
         # save training process image
-        prefix = mkdir(self.param.model_name)
+        prefix = mkdir(self.param.model_name, "energy_loss")
         plt.savefig(
             prefix + "//" + self.param.model_name + "_" + self.param.loss_name + ".png")
 

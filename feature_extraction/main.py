@@ -3,6 +3,7 @@ import model
 import utils
 import data_processing
 import tensorflow as tf
+import numpy as np
 
 
 # Example param for model
@@ -30,7 +31,7 @@ def train_model(model_name):
         # 'data\\a-nightmare-on-elm-street\\data.npy',
         # 'data\\argus-no-senshi-japan-\\data.npy',
         'data\\final-fantasy\\data.npy',
-        'data\\super-mario-bros\\data.npy',
+        # 'data\\super-mario-bros\\data.npy',
         # 'data\\wizards-and-warriors\\data.npy'
     ]
 
@@ -38,8 +39,8 @@ def train_model(model_name):
         # 'data\\a-nightmare-on-elm-street\\label.npy',
         #  'data\\argus-no-senshi-japan-\\label.npy',
          'data\\final-fantasy\\label.npy',
-         'data\\super-mario-bros\\label.npy',
-         # 'data\\wizards-and-warriors\\label.npy'
+        #  'data\\super-mario-bros\\label.npy',
+        #  'data\\wizards-and-warriors\\label.npy'
      ]
     for i in range(len(dataFilePath)):
         dataFilePath[i] = pathPrefix + dataFilePath[i];
@@ -83,11 +84,11 @@ def train_model(model_name):
                     accuracy = cur_model.evaluate(sess, X_test, Y_test)
                     print('***** test accuracy: %.3f' % accuracy)
                 saver = tf.train.Saver()
-                model_path = saver.save(sess, "tf_models/" + model_name + "/" + model_name + "_" + loss_name + ".ckpt")
+                model_path = saver.save(sess, "tf_models/" + model_name + "/" + loss_name + "/" + model_name + "_" + loss_name + ".ckpt")
                 print("Model saved in %s" % model_path)
 
 
-def predict(model_path, data_path, num_prediction):
+def predict(model_path, model_name, data_path, num_prediction):
     tf.reset_default_graph()
 
     predicted_tse, predicted_bpm, predicted_energy = np.array([0]),np.array([0]),np.array([0])
@@ -95,20 +96,24 @@ def predict(model_path, data_path, num_prediction):
     file_suffix = '_loss.ckpt'
 
     for model_suffix in model_suffixes:
+        tf.compat.v1.reset_default_graph()
         sess = tf.Session()
-        saver = tf.train.Saver()
         predict_data = data_processing.load_predict_data(data_path, num_prediction)
         if model_suffix is '_tse':
             predict_model = model.TseFeatureExtractionModel(MODEL_PARAMS)
-            saver.restore(sess, model_path + model_suffix + file_suffix)
+            saver = tf.train.Saver()
+            print(model_path + "/" + model_name + "/tse_loss/" + model_name + model_suffix + file_suffix)
+            saver.restore(sess, model_path + "/" + model_name + "/tse_loss/" + model_name + model_suffix + file_suffix)
             predicted_tse = predict_model.predict(sess, predict_data)
         elif model_suffix is '_bpm':
             predict_model = model.BpmFeatureExtractionModel(MODEL_PARAMS)
-            saver.restore(sess, model_path + model_suffix + file_suffix)
+            saver = tf.train.Saver()
+            saver.restore(sess, model_path + "/" + model_name + "/bpm_loss/" + model_name + model_suffix + file_suffix)
             predicted_bpm = predict_model.predict(sess, predict_data)
         else:
             predict_model = model.EnergyFeatureExtractionModel(MODEL_PARAMS)
-            saver.restore(sess, model_path + model_suffix + file_suffix)
+            saver = tf.train.Saver()
+            saver.restore(sess, model_path + "/" + model_name + "/energy_loss/" + model_name + model_suffix + file_suffix)
             predicted_energy = predict_model.predict(sess, predict_data)
 
     predicted_labels = data_processing.merge_labels(predicted_tse, predicted_bpm, predicted_energy)
@@ -121,7 +126,8 @@ if __name__ == "__main__":
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--model_name", "-m", type=str, help="model character")
     parser.add_argument("--predict", "-p", default=False, nargs='?', const=True, help="use train mode")
-    parser.add_argument("--predict_file", "-f", type=str, default="tf_models/model_name", help="path to model directory plus model prefix")
+    parser.add_argument("--predict_file", "-f", type=str, default="tf_models/model_name",
+                        help="path to model directory plus model prefix")
     parser.add_argument("--predict_data", "-d", type=str, help="model data for predict")
     parser.add_argument("--predict_num", "-n", default=10, help="how many data should be predicted in this data set")
 
@@ -132,7 +138,7 @@ if __name__ == "__main__":
 
     if args.predict:
         assert args.predict_data is not None
-        predict(args.predict_file, args.predict_data, args.predict_num)
+        predict(args.predict_file, args.model_name, args.predict_data, int(args.predict_num))
     else:
         assert args.model_name
         train_model(args.model_name)
