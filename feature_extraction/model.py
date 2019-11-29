@@ -89,7 +89,7 @@ class FeatureExtractionModel(object):
             print('fc_tse layer: ' + str(self.fc_tse.get_shape()))
 
         with tf.compat.v1.variable_scope('fc_bpm'):
-            self.fc_bpm = fc(self.flat, 20)
+            self.fc_bpm = fc(self.flat, 1)
             print('fc_bpm layer: ' + str(self.fc_bpm.get_shape()))
 
         with tf.compat.v1.variable_scope('fc_energy'):
@@ -115,6 +115,7 @@ class FeatureExtractionModel(object):
 
         # Output is tse, which value will be [0, 2]
         tse_labels = tf.one_hot(self.Y[:,0], 3)
+        bpm_labels = self.Y[:,1]
         # Output is energy, which value will be [0, 19]
         energy_labels = tf.one_hot(self.Y[:,2], 20)
 
@@ -126,8 +127,9 @@ class FeatureExtractionModel(object):
 
         # Compute loss
         tse_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(tse_labels, logits_tse))
+        bpm_loss = tf.compat.v2.nn.l2_loss(regression_bpm - bpm_labels)
         energy_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(energy_labels, logits_energy))
-        self.loss_op = energy_loss + tse_loss
+        self.loss_op = bpm_loss
         
         # Build optimizer
         lr = self.param.lr
@@ -144,6 +146,8 @@ class FeatureExtractionModel(object):
         self.tse_predict_op = tf.argmax(logits_tse, 1)
         tse_correct = tf.equal(self.tse_predict_op, self.Y[:,0])
         self.tse_accuracy_op = tf.reduce_mean(tf.cast(tse_correct, tf.float32))
+        # bpm
+        
         # energy
         self.energy_predict_op = tf.argmax(logits_energy, 1)
         energy_correct = tf.equal(self.energy_predict_op, self.Y[:,2])
@@ -193,7 +197,7 @@ class FeatureExtractionModel(object):
         plt.plot(accuracies, '-o')
         plt.xlabel('IterationForAccuracy')
         plt.gcf().set_size_inches(15, 12)
-        plt.show()
+        plt.savefig('current_figure.png')
 
     def evaluate(self, sess, X_eval, Y_eval):
         eval_tse_accuracy = 0.0
