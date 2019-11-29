@@ -19,24 +19,26 @@ MODEL_PARAMS = utils.ParamDict(
     num_training = 0,                # will be changed automatically
     num_validation = 0,              # will be changed automatically
     num_test = 0,                    # will be changed automatically
+    loss_name = "",
+    model_name = "",
 )
 
 
-def train_model():
+def train_model(model_name):
     pathPrefix = "C:\\Users\\ziang\\OneDrive\\work_space\\CSCI-566\\Project\\";
     dataFilePath = [
-        'data\\a-nightmare-on-elm-street\\data.npy',
+        # 'data\\a-nightmare-on-elm-street\\data.npy',
         # 'data\\argus-no-senshi-japan-\\data.npy',
-        # 'data\\final-fantasy\\data.npy',
-        # 'data\\super-mario-bros\\data.npy',
+        'data\\final-fantasy\\data.npy',
+        'data\\super-mario-bros\\data.npy',
         # 'data\\wizards-and-warriors\\data.npy'
     ]
 
     labelFilePath = [
-        'data\\a-nightmare-on-elm-street\\label.npy',
+        # 'data\\a-nightmare-on-elm-street\\label.npy',
         #  'data\\argus-no-senshi-japan-\\label.npy',
-        #  'data\\final-fantasy\\label.npy',
-         # 'data\\super-mario-bros\\label.npy',
+         'data\\final-fantasy\\label.npy',
+         'data\\super-mario-bros\\label.npy',
          # 'data\\wizards-and-warriors\\label.npy'
      ]
     for i in range(len(dataFilePath)):
@@ -63,17 +65,26 @@ def train_model():
     MODEL_PARAMS.num_validation = X_val.shape[0]
     MODEL_PARAMS.num_test = X_test.shape[0]
 
-    tf.compat.v1.reset_default_graph()
+    for loss_name in ["bpm_loss"]:
+        tf.compat.v1.reset_default_graph()
+        with tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
+            with tf.device('/gpu:0'):
+                MODEL_PARAMS.loss_name = loss_name
+                MODEL_PARAMS.model_name = model_name
+                if MODEL_PARAMS.loss_name is "energy_loss":
+                    cur_model = model.EnergyFeatureExtractionModel(MODEL_PARAMS)
+                elif MODEL_PARAMS.loss_name is "tse_loss":
+                    cur_model = model.TseFeatureExtractionModel(MODEL_PARAMS)
+                else:
+                    cur_model = model.BpmFeatureExtractionModel(MODEL_PARAMS)
 
-    with tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
-        with tf.device('/gpu:0'):
-            cur_model = model.FeatureExtractionModel(MODEL_PARAMS)
-            cur_model.train(sess, X_train, Y_train, X_val, Y_val)
-            accuracy = cur_model.evaluate(sess, X_test, Y_test)
-            print('***** test accuracy: %.3f' % accuracy)
-            saver = tf.train.Saver()
-            model_path = saver.save(sess, "tf_models/feature_extraction_v1.ckpt")
-            print("Model saved in %s" % model_path)
+                cur_model.train(sess, X_train, Y_train, X_val, Y_val)
+                if MODEL_PARAMS.loss_name is not "bpm_loss":
+                    accuracy = cur_model.evaluate(sess, X_test, Y_test)
+                    print('***** test accuracy: %.3f' % accuracy)
+                saver = tf.train.Saver()
+                model_path = saver.save(sess, "tf_models/" + model_name + "/" + model_name + "_" + loss_name + ".ckpt")
+                print("Model saved in %s" % model_path)
 
 
 def predict(model_path, data_path, num_prediction):
@@ -90,6 +101,7 @@ def predict(model_path, data_path, num_prediction):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="REPLACE WITH DESCRIPTION",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--model_name", "-m", type=str, help="model character")
     parser.add_argument("--predict", "-p", default=False, nargs='?', const=True, help="use train mode")
     parser.add_argument("--predict_file", "-f", type=str, default="tf_models/feature_extraction_v1.ckpt", help="model file for predict")
     parser.add_argument("--predict_data", "-d", type=str, help="model data for predict")
@@ -104,4 +116,5 @@ if __name__ == "__main__":
         assert args.predict_data is not None
         predict(args.predict_file, args.predict_data, args.predict_num)
     else:
-        train_model()
+        assert args.model_name
+        train_model(args.model_name)

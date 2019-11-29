@@ -50,9 +50,10 @@ class Preprocessing:
         y = y[:,[1,2,3]]
         # convert bpm from 4,8,16 to 0,1,2
         y[:,0] = np.log2(y[:,0]) - 2
+        # convert energy
+        y[:,2] = y[:,2] - 1
         # convert bpm
-
-        y[:,2] = (60 * 1000000) / (y[:,2] * 4)
+        y[:,1] = (60 * 1000000) / (y[:,1] * 4)
         
         print(X.shape)
         print(y.shape)
