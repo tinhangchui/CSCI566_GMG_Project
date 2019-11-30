@@ -2,6 +2,9 @@
 *.csv
 *.out
 *.npy
+*.mid
+*.zip
+*.rar
 feature_extraction/__pycache__/*
 feature_extraction/predict*
 feature_extraction/data/*
