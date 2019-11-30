@@ -28,17 +28,17 @@ MODEL_PARAMS = utils.ParamDict(
 def train_model(model_name):
     pathPrefix = "C:\\Users\\ziang\\OneDrive\\work_space\\CSCI-566\\Project\\";
     dataFilePath = [
-        # 'data\\a-nightmare-on-elm-street\\data.npy',
+        'data\\a-nightmare-on-elm-street\\data.npy',
         # 'data\\argus-no-senshi-japan-\\data.npy',
-        'data\\final-fantasy\\data.npy',
+        # 'data\\final-fantasy\\data.npy',
         # 'data\\super-mario-bros\\data.npy',
         # 'data\\wizards-and-warriors\\data.npy'
     ]
 
     labelFilePath = [
-        # 'data\\a-nightmare-on-elm-street\\label.npy',
+        'data\\a-nightmare-on-elm-street\\label.npy',
         #  'data\\argus-no-senshi-japan-\\label.npy',
-         'data\\final-fantasy\\label.npy',
+        #  'data\\final-fantasy\\label.npy',
         #  'data\\super-mario-bros\\label.npy',
         #  'data\\wizards-and-warriors\\label.npy'
      ]
