@@ -21,12 +21,12 @@ class DataPreparation(object):
     trio_dataset = []
     def __init__(self):
         print("preparing data...")
-        DataPreparation.dataset = self.build_dataset(DATA_POOL_PATH, DATABASE_PATH)
-        DataPreparation.trio_dataset = self.generate_trainable_data(DATABASE_PATH, self.dataset)
+        DataPreparation.dataset = DataPreparation.build_dataset(DATA_POOL_PATH, DATABASE_PATH)
+        DataPreparation.trio_dataset = DataPreparation.generate_trainable_data(DATABASE_PATH, self.dataset)
         print("data prepared!")
 
     @classmethod
-    def build_dataset(data_pool_path, save_path):
+    def build_dataset(cls, data_pool_path, save_path):
         """
         build dataset entity from raw midi files
         parse as pretty_midi PrettyMIDI object
@@ -57,14 +57,22 @@ class DataPreparation(object):
         return midi_file_list
 
     @classmethod
-    def generate_trainable_data(dataset_path, alive_dataset=[]):
+    def generate_trainable_data(cls, dataset_path, alive_dataset=[]):
         """
         parse dataset to screen and split layers
         generate a wrapped dataset for training networks
         save trainable_dataset to same path with dataset
+            quote:
+                For the trio data, we used a 16-bar sliding window (with a stride of 1 bar)
+                to extract all unique sequences containing an instrument with a program number
+                in the piano, chromatic percussion, organ, or guitar interval, [0, 31], one
+                in the bass interval, [32, 39], and one that is a drum (channel 10), with at most
+                a single bar of consecutive rests in any instrument. If there were multiple
+                instruments in any of the three categories, we took the cross product to consider
+                all possible combinations. This resulted in 9.4 million examples.
         :param dataset_path: path of loading dataset and saving trainable_dataset
         :param alive_dataset: caller can pass a in-memory dataset into this function
-        :return:
+        :return: prepared alive trio dataset
         """
         # restore dataset
         print("loading dataset to memory...")
@@ -77,16 +85,20 @@ class DataPreparation(object):
             f.close()
         print("loaded dataset into running memory!")
 
-        # screen data for trio dataset
-        print("screening dataset...")
+        # screen and split data for trio dataset
+        print("screening & splitting dataset...")
         trio_dataset = []
-        pass
+        for midi in dataset:
+            melodies = [instr.program for instr in midi.instruments if instr.program in range(0, 31 + 1)]
+            bases   = [instr.program for instr in midi.instruments if instr.program in range(32, 39 + 1)]
+            drums   = [instr.program for instr in midi.instruments if instr.program in [10]]
+            if len(drums) > 0 and len(bases) > 0 and len(melodies) > 0:
+                # cross product
+                trio_structs = [[melody, base, drum] for melody in melodies for base in bases for drum in drums]
+                # window-split
+                for trio_struct in trio_structs:
+                    trio_dataset += DataPreparation.window_split_trio(midi, trio_struct)
         print("built trio dataset")
-
-        # split tracks into pieces
-        print("splitting tracks")
-        pass
-        print("split done!")
 
         # persisting trainable_dataset
         print("saving trio dataset...")
@@ -98,3 +110,9 @@ class DataPreparation(object):
 
         # return
         return trio_dataset
+
+    @classmethod
+    def window_split_trio(cls, midi, trio_struct):
+        # windowing
+        length = midi.get_end_time()
+        for [start, end] in

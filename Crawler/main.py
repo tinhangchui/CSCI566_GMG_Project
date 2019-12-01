@@ -36,4 +36,4 @@ def spider_man_mdidi(reuse=False, file_path_name="", save_path="./data"):
         s_url_list = load_list(file_path_name)
         save_midi(s_url_list, save_path)
 
-spider_man_mdidi(True, "./data/s_url_list.txt")
+spider_man_mdidi(True, file_path_name="./data/s_url_list.txt")

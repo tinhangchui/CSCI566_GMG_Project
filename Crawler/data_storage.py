@@ -8,11 +8,11 @@ import os
 def save_midi(s_url_list, save_path):
     counter = 0
     for s_url in s_url_list:
-        name = s_url.split("/")[-1]
         try:
+            name = s_url.split("/")[-2] + "_" + s_url.split("/")[-1]
             urlretrieve(s_url, save_path + "/" + name)
             counter += 1
-            print("saved " + counter + " | " + name + "!")
+            print("saved " + str(counter) + " | " + name + "!")
         except BaseException:
             pass
         continue
